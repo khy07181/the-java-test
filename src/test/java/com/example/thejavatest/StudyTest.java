@@ -1,6 +1,7 @@
 package com.example.thejavatest;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.*;
 
 import java.time.Duration;
 
@@ -48,6 +49,36 @@ class StudyTest {
             // Thread.sleep(300); - 100ms 초과할 경우 바로 실패
             Thread.sleep(10);
         });
+    }
+
+    @Test
+    @DisplayName("조건에 따라 테스트 실행하기 - 환경변수")
+    @EnabledIfEnvironmentVariable(named = "TEST_ENV", matches = "TEST")
+    @Disabled
+    void assumption_env() {
+        String test_env = System.getenv("TEST_ENV");
+        System.out.println(test_env);
+        assertTrue("LOCAL".equalsIgnoreCase(test_env));
+    }
+
+    @Test
+    @DisplayName("조건에 따라 테스트 실행하기 - OS")
+    @EnabledOnOs({OS.MAC, OS.LINUX}) // @DisabledOnOs로 비활성화
+    @Disabled
+    void assumption_OS() {
+        String test_env = System.getenv("TEST_ENV");
+        System.out.println(test_env);
+        assertTrue("LOCAL".equalsIgnoreCase(test_env));
+    }
+
+    @Test
+    @DisplayName("조건에 따라 테스트 실행하기 - java 버젼")
+    @EnabledOnJre({JRE.JAVA_8, JRE.JAVA_11, JRE.JAVA_13}) // @DisabledOnJre로 비활성화
+    @Disabled
+    void assumption_java_version() {
+        String test_env = System.getenv("TEST_ENV");
+        System.out.println(test_env);
+        assertTrue("LOCAL".equalsIgnoreCase(test_env));
     }
 
     @BeforeAll
