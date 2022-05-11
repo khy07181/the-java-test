@@ -89,6 +89,22 @@ class StudyTest {
         assertNotNull(study);
     }
 
+    @Test
+    @DisplayName("custom tag test")
+    @FastTest // JUnit이 제공하는 annotation은 meta annotation으로 사용할 수 있다.
+    void custom_tag_test_fast() {
+        Study study = new Study(10);
+        assertNotNull(study);
+    }
+
+    @Test
+    @DisplayName("custom tag test")
+    @SlowTest
+    void custom_tag_test_slow() {
+        Study study = new Study(10);
+        assertNotNull(study);
+    }
+
     @BeforeAll
     static void beforeAll() {
         System.out.println("before all");
