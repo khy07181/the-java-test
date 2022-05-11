@@ -24,7 +24,7 @@ class StudyTest {
 
     @Test
     @DisplayName("assertion exception test")
-    void AssertionTest_Exception() {
+    void AssertionExceptionTest() {
         // 예외 확인
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Study(-10));
         // 예외 메시지 기대값 확인
@@ -33,7 +33,7 @@ class StudyTest {
 
     @Test
     @DisplayName("assertion timeout test")
-    void AssertionTimeOut() {
+    void AssertionTimeOutTest() {
         assertTimeout(Duration.ofMillis(100), () -> {
             new Study(10);
             // Thread.sleep(300); - 300ms 경과 후 실패
@@ -55,7 +55,7 @@ class StudyTest {
     @DisplayName("조건에 따라 테스트 실행하기 - 환경변수")
     @EnabledIfEnvironmentVariable(named = "TEST_ENV", matches = "TEST")
     @Disabled
-    void assumption_env() {
+    void assumptionEnv() {
         String test_env = System.getenv("TEST_ENV");
         System.out.println(test_env);
         assertTrue("LOCAL".equalsIgnoreCase(test_env));
@@ -65,7 +65,7 @@ class StudyTest {
     @DisplayName("조건에 따라 테스트 실행하기 - OS")
     @EnabledOnOs({OS.MAC, OS.LINUX}) // @DisabledOnOs로 비활성화
     @Disabled
-    void assumption_OS() {
+    void assumptionOS() {
         String test_env = System.getenv("TEST_ENV");
         System.out.println(test_env);
         assertTrue("LOCAL".equalsIgnoreCase(test_env));
@@ -75,14 +75,14 @@ class StudyTest {
     @DisplayName("조건에 따라 테스트 실행하기 - java 버젼")
     @EnabledOnJre({JRE.JAVA_8, JRE.JAVA_11, JRE.JAVA_13}) // @DisabledOnJre로 비활성화
     @Disabled
-    void assumption_java_version() {
+    void assumptionJavaVersion() {
         String test_env = System.getenv("TEST_ENV");
         System.out.println(test_env);
         assertTrue("LOCAL".equalsIgnoreCase(test_env));
     }
 
     @Test
-    @DisplayName("tagging test fast")
+    @DisplayName("tagging test - fast")
     @Tag("fast") // fast가 tagging되어 있는 테스트만 실행 : edit configuration - tags
     void taggingTest() {
         Study study = new Study(10);
@@ -90,17 +90,17 @@ class StudyTest {
     }
 
     @Test
-    @DisplayName("custom tag test")
+    @DisplayName("fast custom tag test")
     @FastTest // JUnit이 제공하는 annotation은 meta annotation으로 사용할 수 있다.
-    void custom_tag_test_fast() {
+    void fastCustomTagTest() {
         Study study = new Study(10);
         assertNotNull(study);
     }
 
     @Test
-    @DisplayName("custom tag test")
+    @DisplayName("slow custom tag test")
     @SlowTest
-    void custom_tag_test_slow() {
+    void slowCustomTagTest() {
         Study study = new Study(10);
         assertNotNull(study);
     }
