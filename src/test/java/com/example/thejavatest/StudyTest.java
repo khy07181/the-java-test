@@ -81,6 +81,14 @@ class StudyTest {
         assertTrue("LOCAL".equalsIgnoreCase(test_env));
     }
 
+    @Test
+    @DisplayName("tagging test fast")
+    @Tag("fast") // fast가 tagging되어 있는 테스트만 실행 : edit configuration - tags
+    void taggingTest() {
+        Study study = new Study(10);
+        assertNotNull(study);
+    }
+
     @BeforeAll
     static void beforeAll() {
         System.out.println("before all");
