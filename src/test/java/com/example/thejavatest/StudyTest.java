@@ -2,6 +2,8 @@ package com.example.thejavatest;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.Duration;
 
@@ -103,6 +105,20 @@ class StudyTest {
     void slowCustomTagTest() {
         Study study = new Study(10);
         assertNotNull(study);
+    }
+
+    @DisplayName("Repetition test")
+    @RepeatedTest(value = 10, name = "{displayName}, {currentRepetition}/{totalRepetitions}")
+    void RepetitionTest(RepetitionInfo repetitionInfo) {
+        System.out.println("test " + repetitionInfo.getCurrentRepetition() + "/" +
+                repetitionInfo.getTotalRepetitions());
+    }
+
+    @DisplayName("parameterized test")
+    @ParameterizedTest(name = "{index} {displayName} message={0}")
+    @ValueSource(strings = {"날씨가", "많이", "추워지고", "있네요."})
+    void parameterizedTest(String message) {
+        System.out.println(message);
     }
 
     @BeforeAll
