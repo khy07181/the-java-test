@@ -18,8 +18,6 @@ import java.time.Duration;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS) // 테스트 클래스당 인스턴스를 하나만 만들어 사용한다.
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class) // integration test, functional test, scenario test의 경우 인스턴스 공유와 테스트의 순서가 중요할 수 있다.
 class StudyTest {
 
     @Order(1)
