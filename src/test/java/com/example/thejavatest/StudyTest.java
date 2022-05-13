@@ -18,9 +18,11 @@ import java.time.Duration;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-//@TestInstance(TestInstance.Lifecycle.PER_CLASS) // 테스트 클래스당 인스턴스를 하나만 만들어 사용한다.
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) // 테스트 클래스당 인스턴스를 하나만 만들어 사용한다.
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class) // integration test, functional test, scenario test의 경우 인스턴스 공유와 테스트의 순서가 중요할 수 있다.
 class StudyTest {
 
+    @Order(1)
     @Test
     @DisplayName("assertion test")
     void AssertionTest() {
@@ -33,6 +35,7 @@ class StudyTest {
         );
     }
 
+    @Order(2)
     @Test
     @DisplayName("assertion exception test")
     void AssertionExceptionTest() {
@@ -42,6 +45,7 @@ class StudyTest {
         assertEquals("limit은 0보다 커야 한다.", exception.getMessage());
     }
 
+    @Order(3)
     @Test
     @DisplayName("assertion timeout test")
     void AssertionTimeOutTest() {
