@@ -2,6 +2,7 @@ package com.example.thejavatest;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.aggregator.AggregateWith;
@@ -17,6 +18,7 @@ import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(FindSlowTestExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class StudyTest {
 
@@ -112,9 +114,9 @@ class StudyTest {
 
     @Test
     @DisplayName("slow custom tag test")
-    @SlowTest
-    void slowCustomTagTest() {
+    void slowCustomTagTest() throws InterruptedException {
         Study study = new Study(10);
+        Thread.sleep(1000L);
         assertNotNull(study);
     }
 
