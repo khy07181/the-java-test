@@ -2,8 +2,16 @@ package com.example.thejavatest;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
+import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.aggregator.AggregateWith;
+import org.junit.jupiter.params.aggregator.ArgumentsAccessor;
+import org.junit.jupiter.params.aggregator.ArgumentsAggregationException;
+import org.junit.jupiter.params.aggregator.ArgumentsAggregator;
+import org.junit.jupiter.params.converter.ArgumentConversionException;
+import org.junit.jupiter.params.converter.ConvertWith;
+import org.junit.jupiter.params.converter.SimpleArgumentConverter;
+import org.junit.jupiter.params.provider.*;
 
 import java.time.Duration;
 
@@ -117,28 +125,49 @@ class StudyTest {
     @DisplayName("parameterized test")
     @ParameterizedTest(name = "{index} {displayName} message={0}")
     @ValueSource(strings = {"날씨가", "많이", "추워지고", "있네요."})
+    @NullAndEmptySource // @EmptySource(parameter에 빈 문자열 추가), @NullSource(parameter에 Null 추가)
     void parameterizedTest(String message) {
         System.out.println(message);
     }
 
-    @BeforeAll
-    static void beforeAll() {
-        System.out.println("before all");
+    @DisplayName("명시적인 타입 변환 test")
+    @ParameterizedTest(name = "{index} {displayName} message={0}")
+    @ValueSource(ints = {10, 20, 40})
+    void convertWithTest(@ConvertWith(StudyConverter.class) Study study) {
+        System.out.println(study.getLimit());
     }
 
-    @AfterAll
-    static void afterAll() {
-        System.out.println("after all");
+    static class StudyConverter extends SimpleArgumentConverter { // 하나의 argument
+        @Override
+        protected Object convert(Object source, Class<?> targetType) throws ArgumentConversionException {
+            assertEquals(Study.class, targetType,  "Can only convert to Study");
+            return new Study(Integer.parseInt(source.toString()));
+        }
     }
 
-    @BeforeEach
-    void beforeEach() {
-        System.out.println("Before each");
+    @DisplayName("ArgumentsAccessor test")
+    @ParameterizedTest(name = "{index} {displayName} message={0}")
+    @CsvSource({"10, java study", "20, 'spring'"})
+    void argumentsAccessorTest(ArgumentsAccessor accessor) { // ArgumentAccessor 인자값을 조합해서 하나로 받아주는 역할
+        Study study = new Study(accessor.getInteger(0), accessor.getString(1));
+        System.out.println(study);
+
     }
 
-    @AfterEach
-    void afterEach() {
-        System.out.println("After each");
+    @DisplayName("ArgumentsAggregator test")
+    @ParameterizedTest(name = "{index} {displayName} message={0}")
+    @CsvSource({"10, java study", "20, 'spring'"})
+    void argumentsAggregatorTest(@AggregateWith(StudyAggregator.class) Study study) {
+        System.out.println(study);
+    }
+
+    // ArgumentAccessor를 사용했을 때 인스턴스를 만드는 작업을 안해도 된다.
+    // 반드시 static inner class 또는 public이어야 한다.
+    static class StudyAggregator implements ArgumentsAggregator {
+        @Override
+        public Object aggregateArguments(ArgumentsAccessor accessor, ParameterContext context) throws ArgumentsAggregationException {
+            return new Study(accessor.getInteger(0), accessor.getString(1));
+        }
     }
 
 }
