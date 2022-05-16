@@ -1,5 +1,7 @@
 package com.example.thejavatest;
 
+import com.example.thejavatest.Study.StudyStatus;
+import com.example.thejavatest.domain.Study;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -33,7 +35,7 @@ class StudyTest {
         assertAll(
                 () -> assertNotNull(study),
                 () -> assertEquals(StudyStatus.DRAFT, study.getStatus(), "스터디를 처음 만들면 상태값이 " + StudyStatus.DRAFT + " 여야 한다."),
-                () -> assertTrue(study.getLimit() > 0, "스터디 최대 참석 가능 인원은 0보다 커야 한다.")
+                () -> assertTrue(study.getLimitCount() > 0, "스터디 최대 참석 가능 인원은 0보다 커야 한다.")
         );
     }
 
@@ -44,7 +46,7 @@ class StudyTest {
         // 예외 확인
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Study(-10));
         // 예외 메시지 기대값 확인
-        assertEquals("limit은 0보다 커야 한다.", exception.getMessage());
+        assertEquals("limitCount는 0보다 커야 한다.", exception.getMessage());
     }
 
     @Order(3)
@@ -141,7 +143,7 @@ class StudyTest {
     @ParameterizedTest(name = "{index} {displayName} message={0}")
     @ValueSource(ints = {10, 20, 40})
     void convertWithTest(@ConvertWith(StudyConverter.class) Study study) {
-        System.out.println(study.getLimit());
+        System.out.println(study.getLimitCount());
     }
 
     static class StudyConverter extends SimpleArgumentConverter { // 하나의 argument
