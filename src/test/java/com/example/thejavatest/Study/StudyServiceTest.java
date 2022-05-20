@@ -12,8 +12,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.util.TestPropertyValues;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.junit.jupiter.Container;
@@ -31,6 +36,7 @@ import static org.mockito.Mockito.times;
 @ActiveProfiles("test")
 @Testcontainers
 @Slf4j
+@ContextConfiguration(initializers = StudyServiceTest.ContainerPropertyInitializer.class)
 class StudyServiceTest {
 
     @Mock
@@ -38,6 +44,8 @@ class StudyServiceTest {
 
     @Autowired
     StudyRepository studyRepository;
+
+    @Value("${container.port}") int port;
 
     @Container
     static GenericContainer postgreSQLContainer = new GenericContainer("postgres")
@@ -54,7 +62,7 @@ class StudyServiceTest {
     @BeforeEach
     void beforeEach() {
         System.out.println("===========");
-        System.out.println(postgreSQLContainer.getMappedPort(5432));
+        System.out.println(port);
         studyRepository.deleteAll();
     }
 
@@ -96,6 +104,15 @@ class StudyServiceTest {
         assertEquals(StudyStatus.OPENED, study.getStatus());
         assertNotNull(study.getOpenedDateTime());
         then(memberService).should().notify(study);
+    }
+
+    static class ContainerPropertyInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+
+        @Override
+        public void initialize(ConfigurableApplicationContext context) {
+            TestPropertyValues.of("container.port=" + postgreSQLContainer.getMappedPort(5432))
+                    .applyTo(context.getEnvironment());
+        }
     }
 
 }
